@@ -13,3 +13,20 @@ Student system - это инновационная система учёта п�
 <img width="624" height="416" alt="image" src="https://github.com/user-attachments/assets/00b9aa71-7e5e-4d74-a0ea-2136bce60a54" />
 Ссылка на API
 https://github.com/UncleJoe7/Lab/blob/main/API%20code
+Как использовать
+
+Создать файл:
+
+nano generate_student_system_structure.sh
+
+
+Вставить туда код и сохранить.
+
+Выдать права на выполнение:
+
+chmod +x generate_student_system_structure.sh
+
+
+Запустить:
+
+./generate_student_system_structure.sh
