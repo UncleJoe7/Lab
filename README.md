@@ -11,3 +11,5 @@ Student system - это инновационная система учёта п�
 <img width="585" height="181" alt="image" src="https://github.com/user-attachments/assets/0ebde500-2b56-48e9-9cf3-d8520bd2ff92" />
 Диаграмма классов предметной области
 <img width="624" height="416" alt="image" src="https://github.com/user-attachments/assets/00b9aa71-7e5e-4d74-a0ea-2136bce60a54" />
+Ссылка на API
+https://github.com/UncleJoe7/Lab/blob/main/API%20code
