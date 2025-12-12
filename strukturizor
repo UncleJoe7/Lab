@@ -1,0 +1,118 @@
+import com.structurizr.Workspace;
+import com.structurizr.model.Container;
+import com.structurizr.model.Component;
+import com.structurizr.model.Person;
+import com.structurizr.model.Relationship;
+import com.structurizr.model.SoftwareSystem;
+import com.structurizr.view.ContainerView;
+import com.structurizr.view.ComponentView;
+import com.structurizr.view.SystemContextView;
+import com.structurizr.view.ViewSet;
+
+public class TaskManagementC4Model {
+
+    public static Workspace createWorkspace() {
+        Workspace workspace = new Workspace("Система управления задачами (C4)", 
+            "C4-модель: Пользователь взаимодействует с Web App → Backend API → БД. " +
+            "В Backend API есть компоненты: Система автоматического отмечания и UserService. " +
+            "Система автоматического отмечания использует БД.");
+
+        // Модель
+        var model = workspace.getModel();
+
+        // Акторы / Персоны
+        Person user = model.addPerson("Пользователь", "Пользователь, создаёт и отслеживает задачи через веб-приложение.");
+
+        // Система уровня (Software System)
+        SoftwareSystem taskSystem = model.addSoftwareSystem("Task Management System", "Система управления задачами для университета / команды.");
+
+        // Контейнеры
+        Container webApp = taskSystem.addContainer("Web Application", 
+            "Веб-приложение, с которым взаимодействует пользователь (SPA / фронтенд).", 
+            "React / Angular / Vue");
+        
+        Container backendApi = taskSystem.addContainer("Backend API", 
+            "REST / GraphQL API, бизнес-логика и оркестрация компонентов системы.", 
+            "Java / Spring Boot (пример)");
+        
+        Container database = taskSystem.addContainer("Database", 
+            "Отношеная/NoSQL база данных для хранения пользователей, задач и отметок.", 
+            "PostgreSQL / MySQL / MongoDB");
+
+        // Отношения между контейнерами и персоной
+        user.uses(webApp, "Использует", "HTTPS / TLS");
+        webApp.uses(backendApi, "Вызывает API для операций с задачами и пользователями", "JSON/HTTPS");
+        backendApi.uses(database, "Читает/пишет данные о задачах, пользователях и отметках", "JDBC / SQL");
+
+        // Компоненты внутри Backend API
+        Component apiController = backendApi.addComponent("API Controller", 
+            "Принимает HTTP-запросы от фронтенда и маршрутизирует их к соответствующим сервисам.", 
+            "Spring MVC / Controllers");
+        
+        Component userService = backendApi.addComponent("UserService", 
+            "Управляет операциями с пользователями: создание, аутентификация, профиль.", 
+            "Java Service");
+        
+        Component autoMarkingSystem = backendApi.addComponent("Система автоматического отмечания", 
+            "Компонент, который автоматически помечает посещения/статусы задач по правилам/триггерам.", 
+            "Java Service / Scheduler / Rules Engine");
+        
+        Component reportingService = backendApi.addComponent("ReportService", 
+            "Формирует отчёты по задачам и посещаемости (по требованию администратора/пользователя).", 
+            "Java Service");
+        
+        Component integrationManager = backendApi.addComponent("IntegrationManager", 
+            "Отвечает за интеграцию с внешними сервисами (уведомления, распознавание и т.п.).", 
+            "Java Service / Adapter");
+
+        // Внутренние связи компонентов
+        apiController.uses(userService, "Вызывает операции управления пользователями", "Java method");
+        apiController.uses(autoMarkingSystem, "Запрашивает автомаркировку / триггерит проверку", "Java method / Message");
+        apiController.uses(reportingService, "Запрашивает отчёты", "Java method");
+        apiController.uses(integrationManager, "Запрашивает интеграционные операции (уведомления и т.д.)", "Java method");
+
+        autoMarkingSystem.uses(database, "Читает/записывает отметки и связанные данные", "JDBC / SQL");
+        userService.uses(database, "Читает/записывает данные пользователей", "JDBC / SQL");
+        reportingService.uses(database, "Читает данные для формирования отчётов", "JDBC / SQL");
+        integrationManager.uses(database, "Хранит/читает параметры интеграций и очереди сообщений", "JDBC / SQL");
+
+        // Часто полезно явно связать Web App -> API Controller (через Backend API контейнер)
+        webApp.uses(apiController, "Отправляет HTTP-запросы (REST API) для операций пользователя", "JSON/HTTPS");
+
+        // Представления (views)
+        ViewSet views = workspace.getViews();
+
+        // System Context view (системный контекст)
+        SystemContextView contextView = views.createSystemContextView(taskSystem, "SystemContext", "Контекстная диаграмма для Task Management System");
+        contextView.addNearestNeighbours(taskSystem);
+        contextView.add(user);
+        contextView.add(taskSystem);
+
+        // Container view (диаграмма контейнеров)
+        ContainerView containerView = views.createContainerView(taskSystem, "Containers", "Диаграмма контейнеров системы управления задачами");
+        containerView.addAllElements();
+
+        // Component view for Backend API
+        ComponentView componentView = views.createComponentView(backendApi, "BackendComponents", "Компонентная диаграмма для Backend API");
+        componentView.addAllComponents();
+        // Добавим также внешние сущности, с которыми взаимодействуют компоненты
+        componentView.add(database);
+        componentView.add(webApp);
+        componentView.add(user);
+
+        // Теги и стили (опционально, для лучшего визуала)
+        var configuration = workspace.getViews().getConfiguration();
+        // Можно добавить стили через workspace.getViews().getConfiguration().addStyles() и т.д.
+        // Но оставим конфигурацию стандартной — при необходимости вы можете добавить свои стили здесь.
+
+        return workspace;
+    }
+
+    public static void main(String[] args) throws Exception {
+        Workspace workspace = createWorkspace();
+
+        // Здесь вы можете сохранить workspace локально (например в DSL/JSON) или загрузить в Structurizr workspace через клиент.
+        // Ниже пример сохранения в JSON (структура workspaces.toJson()), либо используйте StructurizrClient для загрузки в облако.
+        System.out.println("Workspace создан. Вы можете сохранить/экспортировать его через Structurizr API или сохранить в файл.");
+    }
+}
