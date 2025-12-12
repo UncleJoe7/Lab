@@ -1,0 +1,41 @@
+#!/bin/bash
+
+# Название проекта
+PROJECT_NAME="student-system"
+
+echo "Создание структуры проекта: $PROJECT_NAME ..."
+
+# Основные директории
+mkdir -p $PROJECT_NAME
+cd $PROJECT_NAME
+
+mkdir -p frontend/src
+mkdir -p frontend/public
+mkdir -p frontend/tests
+
+mkdir -p backend/src/controllers
+mkdir -p backend/src/services
+mkdir -p backend/src/models
+mkdir -p backend/src/routes
+mkdir -p backend/src/utils
+mkdir -p backend/tests
+
+mkdir -p database/migrations
+mkdir -p database/seeds
+mkdir -p database/backups
+
+mkdir -p docs/architecture
+mkdir -p docs/api
+mkdir -p docs/requirements
+
+mkdir -p tests/unit
+mkdir -p tests/integration
+mkdir -p tests/e2e
+
+# Дополнительные файлы
+touch README.md
+touch .gitignore
+
+echo "Проект успешно создан!"
+echo "Структура:"
+tree .
