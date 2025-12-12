@@ -1,0 +1,566 @@
+openapi: 3.0.3
+info:
+  title: Student System API
+  version: 1.1.0
+  description: >
+    API для управления студентами, задачами, проектами, посещаемостью и расписанием
+    в университетской системе.
+
+servers:
+  - url: https://api.university.local/v1
+
+tags:
+  - name: Users
+  - name: Projects
+  - name: Tasks
+  - name: Groups
+  - name: Attendance
+  - name: Schedule
+
+paths:
+
+  ########################################
+  # USERS
+  ########################################
+  /users:
+    get:
+      tags: [Users]
+      summary: Получить список пользователей
+      responses:
+        '200':
+          description: Список пользователей
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+
+    post:
+      tags: [Users]
+      summary: Создать нового пользователя
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreateRequest'
+      responses:
+        '201':
+          description: Пользователь создан
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  /users/{id}:
+    get:
+      tags: [Users]
+      summary: Получить пользователя по ID
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      responses:
+        '200':
+          description: Информация о пользователе
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+    put:
+      tags: [Users]
+      summary: Обновить данные пользователя
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdateRequest'
+      responses:
+        '200':
+          description: Обновленный пользователь
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+    delete:
+      tags: [Users]
+      summary: Удалить пользователя
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      responses:
+        '204':
+          description: Удалено
+
+
+  ########################################
+  # PROJECTS
+  ########################################
+  /projects:
+    get:
+      tags: [Projects]
+      summary: Получить список проектов
+      responses:
+        '200':
+          description: Список проектов
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Project'
+
+    post:
+      tags: [Projects]
+      summary: Создать проект
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProjectCreateRequest'
+      responses:
+        '201':
+          description: Проект создан
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+
+  /projects/{id}:
+    get:
+      tags: [Projects]
+      summary: Получить проект по ID
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+      responses:
+        '200':
+          description: Информация о проекте
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+
+    put:
+      tags: [Projects]
+      summary: Обновить проект
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProjectUpdateRequest'
+      responses:
+        '200':
+          description: Обновленный проект
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+
+    delete:
+      tags: [Projects]
+      summary: Удалить проект
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+      responses:
+        '204':
+          description: Удалено
+
+
+  ########################################
+  # TASKS
+  ########################################
+  /tasks:
+    get:
+      tags: [Tasks]
+      summary: Получить список задач
+      responses:
+        '200':
+          description: Список задач
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
+
+    post:
+      tags: [Tasks]
+      summary: Создать задачу
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskCreateRequest'
+      responses:
+        '201':
+          description: Задача создана
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+
+  /tasks/{id}:
+    get:
+      tags: [Tasks]
+      summary: Получить задачу по ID
+      parameters:
+        - $ref: '#/components/parameters/TaskId'
+      responses:
+        '200':
+          description: Информация о задаче
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+
+    put:
+      tags: [Tasks]
+      summary: Обновить задачу
+      parameters:
+        - $ref: '#/components/parameters/TaskId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskUpdateRequest'
+      responses:
+        '200':
+          description: Обновленная задача
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+
+    delete:
+      tags: [Tasks]
+      summary: Удалить задачу
+      parameters:
+        - $ref: '#/components/parameters/TaskId'
+      responses:
+        '204':
+          description: Удалено
+
+
+  ########################################
+  # GROUPS (Университетская логика)
+  ########################################
+  /groups:
+    get:
+      tags: [Groups]
+      summary: Получить список учебных групп
+      responses:
+        '200':
+          description: Список групп
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Group'
+
+    post:
+      tags: [Groups]
+      summary: Создать учебную группу
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GroupCreateRequest'
+      responses:
+        '201':
+          description: Группа создана
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+
+  /groups/{id}/students:
+    get:
+      tags: [Groups]
+      summary: Получить список студентов группы
+      parameters:
+        - $ref: '#/components/parameters/GroupId'
+      responses:
+        '200':
+          description: Список студентов
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+
+    post:
+      tags: [Groups]
+      summary: Добавить студента в группу
+      parameters:
+        - $ref: '#/components/parameters/GroupId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                studentId:
+                  type: string
+      responses:
+        '200':
+          description: Студент добавлен
+
+
+  ########################################
+  # ATTENDANCE (Посещаемость)
+  ########################################
+  /attendance/mark:
+    post:
+      tags: [Attendance]
+      summary: Отметить посещаемость студента
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AttendanceMarkRequest'
+      responses:
+        '200':
+          description: Посещение отмечено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttendanceRecord'
+
+  /attendance/group/{groupId}/session/{sessionId}:
+    get:
+      tags: [Attendance]
+      summary: Получить посещаемость группы за занятие
+      parameters:
+        - $ref: '#/components/parameters/GroupId'
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Посещаемость группы
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AttendanceRecord'
+
+
+  ########################################
+  # SCHEDULE (Расписание)
+  ########################################
+  /schedule:
+    get:
+      tags: [Schedule]
+      summary: Получить общее расписание
+      responses:
+        '200':
+          description: Расписание
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ScheduleEntry'
+
+    post:
+      tags: [Schedule]
+      summary: Добавить занятие в расписание
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScheduleCreateRequest'
+      responses:
+        '201':
+          description: Занятие добавлено
+
+  /schedule/{id}:
+    get:
+      tags: [Schedule]
+      summary: Получить занятие по ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Занятие
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScheduleEntry'
+
+
+########################################
+# COMPONENTS
+########################################
+components:
+
+  parameters:
+    UserId:
+      name: id
+      in: path
+      required: true
+      schema: { type: string }
+
+    ProjectId:
+      name: id
+      in: path
+      required: true
+      schema: { type: string }
+
+    TaskId:
+      name: id
+      in: path
+      required: true
+      schema: { type: string }
+
+    GroupId:
+      name: id
+      in: path
+      required: true
+      schema: { type: string }
+
+  schemas:
+
+    User:
+      type: object
+      properties:
+        id: { type: string }
+        name: { type: string }
+        role: { type: string, enum: [student, admin, teacher] }
+        email: { type: string }
+
+    UserCreateRequest:
+      type: object
+      required: [name, email]
+      properties:
+        name: { type: string }
+        email: { type: string }
+        role:
+          type: string
+          default: student
+
+    UserUpdateRequest:
+      type: object
+      properties:
+        name: { type: string }
+        email: { type: string }
+        role: { type: string, enum: [student, admin, teacher] }
+
+    Project:
+      type: object
+      properties:
+        id: { type: string }
+        name: { type: string }
+        description: { type: string }
+
+    ProjectCreateRequest:
+      type: object
+      required: [name]
+      properties:
+        name: { type: string }
+        description: { type: string }
+
+    ProjectUpdateRequest:
+      type: object
+      properties:
+        name: { type: string }
+        description: { type: string }
+
+    Task:
+      type: object
+      properties:
+        id: { type: string }
+        title: { type: string }
+        description: { type: string }
+        projectId: { type: string }
+        assignedTo: { type: string }
+        status:
+          type: string
+          enum: [todo, in_progress, done]
+
+    TaskCreateRequest:
+      type: object
+      required: [title]
+      properties:
+        title: { type: string }
+        description: { type: string }
+        projectId: { type: string }
+        assignedTo: { type: string }
+
+    TaskUpdateRequest:
+      type: object
+      properties:
+        title: { type: string }
+        description: { type: string }
+        status:
+          type: string
+          enum: [todo, in_progress, done]
+
+    Group:
+      type: object
+      properties:
+        id: { type: string }
+        name: { type: string }
+        year: { type: integer }
+
+    GroupCreateRequest:
+      type: object
+      required: [name]
+      properties:
+        name: { type: string }
+        year: { type: integer }
+
+    AttendanceRecord:
+      type: object
+      properties:
+        id: { type: string }
+        studentId: { type: string }
+        sessionId: { type: string }
+        timestamp: { type: string, format: date-time }
+        status: { type: string, enum: [present, absent] }
+
+    AttendanceMarkRequest:
+      type: object
+      required: [studentId, sessionId]
+      properties:
+        studentId: { type: string }
+        sessionId: { type: string }
+        status: { type: string, enum: [present, absent], default: present }
+
+    ScheduleEntry:
+      type: object
+      properties:
+        id: { type: string }
+        groupId: { type: string }
+        subject: { type: string }
+        teacherId: { type: string }
+        startTime: { type: string, format: date-time }
+        endTime: { type: string, format: date-time }
+
+    ScheduleCreateRequest:
+      type: object
+      required: [groupId, subject, startTime, endTime]
+      properties:
+        groupId: { type: string }
+        subject: { type: string }
+        teacherId: { type: string }
+        startTime: { type: string, format: date-time }
+        endTime: { type: string, format: date-time }
